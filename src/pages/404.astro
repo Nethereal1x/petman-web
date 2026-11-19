@@ -1,0 +1,72 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import Img from '../components/Img.astro';
+import { site } from '../data/site';
+---
+
+<Base title="Сторінку не знайдено | Petman" description="Такої сторінки на сайті Petman немає." noindex>
+  <section class="nf t-orange">
+    <div class="wrap nf__grid">
+      <div class="nf__text">
+        <p class="eyebrow">Помилка 404</p>
+        <h1 class="display">Тут нікого немає</h1>
+        <p class="lead">
+          Сторінка переїхала або її ніколи не було. Ми теж нещодавно переїжджали, тож розуміємо.
+        </p>
+        <div class="btn-row">
+          <Button href="/" variant="white">На головну</Button>
+          <Button href="/posluhy/" variant="line">Послуги і ціни</Button>
+          <Button href={`tel:${site.phone}`} variant="line" icon="phone"><span class="num">{site.phoneDisplay}</span></Button>
+        </div>
+      </div>
+      <div class="nf__dog" aria-hidden="true">
+        <Img name="dog-lab" alt="" sizes="(max-width: 860px) 60vw, 34vw" loading="eager" />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    min-height: 100svh;
+    padding-top: clamp(8rem, 13vw, 12rem);
+    overflow: hidden;
+  }
+
+  .nf__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 2rem var(--gutter);
+    align-items: end;
+  }
+
+  .nf__text {
+    display: grid;
+    gap: 1.75rem;
+    justify-items: start;
+    padding-bottom: clamp(3rem, 8vw, 8rem);
+  }
+
+  .nf__text .lead {
+    max-width: 34ch;
+  }
+
+  .nf__dog {
+    margin-bottom: -35%;
+    /* фото обрізане справа: цей край ховаємо за межею екрана */
+    margin-right: calc(var(--gutter) * -1 - 3vw);
+  }
+
+  @media (max-width: 860px) {
+    .nf__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .nf__dog {
+      width: 60%;
+      justify-self: end;
+      margin-bottom: -40%;
+    }
+  }
+</style>

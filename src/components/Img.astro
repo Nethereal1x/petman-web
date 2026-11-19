@@ -1,0 +1,32 @@
+---
+import manifest from '../data/images.json';
+
+interface Props {
+  name: keyof typeof manifest;
+  alt: string;
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  class?: string;
+}
+
+const { name, alt, sizes = '100vw', loading = 'lazy', fetchpriority, class: className } = Astro.props;
+const m = manifest[name];
+const set = (ext: string) => m.widths.map((w) => `/img/${name}-${w}.${ext} ${w}w`).join(', ');
+const largest = m.widths[m.widths.length - 1];
+---
+
+<picture>
+  <source type="image/avif" srcset={set('avif')} sizes={sizes} />
+  <source type="image/webp" srcset={set('webp')} sizes={sizes} />
+  <img
+    src={`/img/${name}-${largest}.webp`}
+    alt={alt}
+    width={m.width}
+    height={m.height}
+    loading={loading}
+    decoding={loading === 'eager' ? 'sync' : 'async'}
+    fetchpriority={fetchpriority}
+    class={className}
+  />
+</picture>

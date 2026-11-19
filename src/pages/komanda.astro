@@ -1,0 +1,98 @@
+---
+import Base from '../layouts/Base.astro';
+import TeamGrid from '../components/TeamGrid.astro';
+import Cta from '../components/Cta.astro';
+import { team } from '../data/team';
+import { site } from '../data/site';
+
+const people = team.map((m) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: m.name,
+  jobTitle: m.role,
+  worksFor: { '@id': new URL('/#clinic', site.url).href },
+  url: new URL(`/komanda/#${m.id}`, site.url).href,
+}));
+---
+
+<Base
+  title="Команда ветеринарної клініки Petman у Львові: лікарі"
+  description="Лікарі ветеринарної клініки Petman у Львові: Вікторія Токарська, Ольга Нагорна, Степан Байляк. Терапія, анестезіологія, хірургія. Вул. Антоновича, 115а."
+  crumbs={[['Команда', '/komanda/']]}
+  schema={people}
+>
+  <section class="page-hero t-white tm">
+    <div class="wrap">
+      <nav aria-label="Хлібні крихти">
+        <ol class="crumbs">
+          <li><a href="/">Головна</a></li>
+          <li aria-current="page">Команда</li>
+        </ol>
+      </nav>
+      <div class="tm__head">
+        <h1 class="h1" data-split>Команда Petman</h1>
+        <p class="lead soft" data-reveal>
+          Ми різні за досвідом і професійними інтересами, але всі ставимося до пацієнтів так, як хотіли б, щоб
+          ставилися до наших власних улюбленців.
+        </p>
+      </div>
+      <TeamGrid detailed />
+    </div>
+  </section>
+
+  <section class="section t-wine">
+    <div class="wrap tm__quote">
+      <p class="eyebrow">Як ми працюємо</p>
+      <p class="tm__text" data-fill>
+        Ми уважно слухаємо власників, враховуємо їхні спостереження, пояснюємо кожне рішення і дбаємо про комфорт
+        пацієнтів. Для нас важливо не лише лікувати, а й бути поруч, коли улюбленцю потрібна допомога.
+      </p>
+    </div>
+  </section>
+
+  <Cta title="Записатися до лікаря" />
+</Base>
+
+<style>
+  .tm {
+    padding-bottom: var(--section);
+  }
+
+  .tm__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 2rem var(--gutter);
+    align-items: end;
+    margin-bottom: clamp(2.5rem, 6vw, 5.5rem);
+  }
+
+  .tm__quote {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3.4fr);
+    gap: 1.5rem var(--gutter);
+  }
+
+  .tm__quote .eyebrow {
+    padding-top: 1em;
+    color: var(--orange-hot);
+  }
+
+  .tm__text {
+    font-size: clamp(1.6rem, 3.6vw, 3.75rem);
+    line-height: 1.08;
+    letter-spacing: -0.042em;
+    font-weight: 500;
+    max-width: 26ch;
+  }
+
+  @media (max-width: 860px) {
+    .tm__head,
+    .tm__quote {
+      grid-template-columns: 1fr;
+    }
+
+    .tm__quote .eyebrow {
+      padding-top: 0;
+    }
+  }
+</style>

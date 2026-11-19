@@ -1,0 +1,303 @@
+---
+import Base from '../layouts/Base.astro';
+import PriceTable from '../components/PriceTable.astro';
+import Calc from '../components/Calc.astro';
+import Cta from '../components/Cta.astro';
+import Icon from '../components/Icon.astro';
+import Button from '../components/Button.astro';
+import { site, formatDate } from '../data/site';
+import { services } from '../data/services';
+
+const priced = services.filter((s) => s.prices.length > 0);
+const unpriced = services.filter((s) => s.prices.length === 0);
+---
+
+<Base
+  title="Ціни ветеринарної клініки у Львові — прайс Petman"
+  description={`Прайс ветеринарної клініки Petman у Львові: прийом 550 грн, кастрація кота 2000 грн, стерилізація кішки 3200 грн, чистка зубів від 2200 грн, аналізи від 450 грн. Актуально на ${formatDate(site.pricesUpdated)}.`}
+  crumbs={[['Ціни', '/tsiny/']]}
+>
+  <section class="page-hero t-orange">
+    <div class="wrap">
+      <nav aria-label="Хлібні крихти">
+        <ol class="crumbs">
+          <li><a href="/">Головна</a></li>
+          <li aria-current="page">Ціни</li>
+        </ol>
+      </nav>
+      <div class="pl-head">
+        <h1 class="h1" data-split>Ціни на ветеринарні послуги</h1>
+        <div class="pl-head__side" data-reveal>
+          <p class="lead">
+            Усі ціни в гривнях, актуальні на {formatDate(site.pricesUpdated)}. Якщо знадобиться щось понад прайс,
+            назвемо суму до процедури.
+          </p>
+          <label class="pl-search">
+            <span class="sr-only">Пошук у прайсі</span>
+            <input type="search" placeholder="Знайти послугу: зуби, кров, УЗД…" data-price-filter autocomplete="off" />
+          </label>
+          <Button href="#pryis" variant="ink" class="pl-jump" data-price-jump>
+            <span data-price-jump-label>Перейти до прайсу</span>
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section t-white pl" id="pryis">
+    <div class="wrap pl__grid">
+      <nav class="pl__nav" aria-label="Розділи прайсу">
+        <ul>
+          {
+            priced.map((s) => (
+              <li>
+                <a href={`#${s.slug}`}>{s.name}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="pl__main">
+        {
+          priced.map((s) => (
+            <article class="pl__service" id={s.slug} data-price-service={s.name}>
+              <header class="pl__service-head">
+                <h2 class="h2">{s.name}</h2>
+                <a class="more" href={`/posluhy/${s.slug}/`}>
+                  Про послугу <Icon name="arrow" />
+                </a>
+              </header>
+              {s.slug === 'sterylizatsiia-kastratsiia' && (
+                <div class="pl__calc">
+                  <Calc id="price-calc" />
+                </div>
+              )}
+              <PriceTable groups={s.prices} />
+              {s.promo && (
+                <p class="pl__note">
+                  Зараз на Чекап 8+ діє акційна вартість. Суму й строк акції уточнюйте в адміністратора.
+                </p>
+              )}
+              {s.priceNote && <p class="pl__note">{s.priceNote}</p>}
+            </article>
+          ))
+        }
+
+        <p class="pl__empty" data-price-empty hidden>
+          Такого в прайсі немає. Зателефонуйте <a class="link num" href={`tel:${site.phone}`}>{site.phoneDisplay}</a>,
+          і ми підкажемо вартість.
+        </p>
+
+        <aside class="pl__other">
+          <h2 class="h3">Ціну назвемо телефоном</h2>
+          <ul>
+            {
+              unpriced.map((s) => (
+                <li>
+                  <a href={`/posluhy/${s.slug}/`}>
+                    {s.name} <Icon name="arrow" />
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="soft">
+            Вартість деяких процедур залежить від ваги та стану здоров’я тварини, складності втручання, потреби в
+            додаткових дослідженнях і медикаментах. Ми завжди пояснюємо план лікування і погоджуємо додаткові послуги та
+            витрати заздалегідь.
+          </p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <Cta title="Маєте питання про вартість?" text="Залиште номер, і ми допоможемо розібратися, що саме потрібно вашій тварині та скільки це коштуватиме." />
+</Base>
+
+<style>
+  .pl-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 2rem var(--gutter);
+    align-items: end;
+  }
+
+  .pl-head__side {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .pl-search input {
+    width: 100%;
+    padding: 1.05rem 1.5rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 1.05rem;
+    outline-offset: 4px;
+  }
+
+  .pl-search input::placeholder {
+    color: rgba(26, 11, 7, 0.6);
+  }
+
+  .pl-jump {
+    justify-self: start;
+  }
+
+  /* Стрілка вниз: прайс під першим екраном */
+  .pl-jump :global(.btn__icon svg) {
+    rotate: 90deg;
+  }
+
+  .pl {
+    scroll-margin-top: 5rem;
+  }
+
+  .pl__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+    gap: 3rem var(--gutter);
+    align-items: start;
+  }
+
+  .pl__nav {
+    position: sticky;
+    top: clamp(6.5rem, 9vw, 9rem);
+  }
+
+  .pl__nav ul {
+    display: grid;
+    gap: 0.15rem;
+    border-left: 2px solid var(--ink);
+  }
+
+  .pl__nav a {
+    display: block;
+    padding: 0.5rem 0 0.5rem 1.1rem;
+    font-weight: 650;
+    letter-spacing: -0.015em;
+    transition:
+      color 0.25s,
+      padding 0.45s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .pl__nav a:hover {
+      color: var(--orange);
+      padding-left: 1.6rem;
+    }
+  }
+
+  .pl__main {
+    display: grid;
+    gap: clamp(4rem, 8vw, 7.5rem);
+  }
+
+  .pl__service {
+    display: grid;
+    gap: clamp(1.75rem, 3vw, 2.75rem);
+    scroll-margin-top: 7rem;
+  }
+
+  .pl__service-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+  }
+
+  .pl__note {
+    max-width: 70ch;
+    font-size: 0.95rem;
+    color: var(--soft);
+  }
+
+  .pl__empty {
+    font-size: clamp(1.4rem, 2.4vw, 2.1rem);
+    letter-spacing: -0.035em;
+    line-height: 1.15;
+    font-weight: 500;
+    max-width: 26ch;
+  }
+
+  .pl__other {
+    display: grid;
+    gap: 1.25rem;
+    padding: clamp(1.5rem, 3vw, 3rem);
+    border-radius: calc(var(--radius) * 1.3);
+    background: var(--ink);
+    color: var(--white);
+    --soft: rgba(255, 255, 255, 0.74);
+  }
+
+  .pl__other ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .pl__other a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1.1rem;
+    border-radius: 999px;
+    background: var(--orange);
+    font-weight: 650;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .pl__other a :global(svg) {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  @media (hover: hover) {
+    .pl__other a:hover {
+      background: var(--white);
+      color: var(--ink);
+    }
+  }
+
+  .pl__other p {
+    max-width: 74ch;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 960px) {
+    .pl-head,
+    .pl__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .pl__nav {
+      position: static;
+    }
+
+    .pl__nav ul {
+      display: flex;
+      gap: 0.4rem;
+      border: 0;
+      margin-inline: calc(var(--gutter) * -1);
+      padding-inline: var(--gutter);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .pl__nav ul::-webkit-scrollbar {
+      display: none;
+    }
+
+    .pl__nav a {
+      padding: 0.6rem 1rem;
+      border-radius: 999px;
+      box-shadow: inset 0 0 0 1.5px var(--line);
+      white-space: nowrap;
+    }
+  }
+</style>

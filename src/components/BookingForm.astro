@@ -1,0 +1,341 @@
+---
+// Запис на прийом: ім'я, телефон, хто пацієнт і причина візиту.
+// Email не питаємо. Згода на обробку даних обов'язкова і веде на політику.
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+import { services } from '../data/services';
+
+interface Props {
+  id?: string;
+}
+
+const { id = 'zapys' } = Astro.props;
+---
+
+<form class="form" data-form data-endpoint={site.formEndpoint} novalidate id={`${id}-form`}>
+  <div class="form__fields">
+    <label class="field">
+      <span class="field__label">Ваше ім’я</span>
+      <input type="text" name="name" autocomplete="given-name" required maxlength="60" />
+      <span class="field__error" data-error-for="name">Напишіть, як до вас звертатися</span>
+    </label>
+
+    <label class="field">
+      <span class="field__label">Телефон</span>
+      <input
+        type="tel"
+        name="phone"
+        autocomplete="tel"
+        inputmode="tel"
+        placeholder="+380"
+        required
+        data-phone
+        maxlength="19"
+      />
+      <span class="field__error" data-error-for="phone">Перевірте номер: потрібно 9 цифр після +380</span>
+    </label>
+
+    <label class="field">
+      <span class="field__label">Хто пацієнт</span>
+      <input type="text" name="pet" placeholder="Напр.: кіт Мурчик, 3 роки" maxlength="80" />
+    </label>
+
+    <label class="field">
+      <span class="field__label">Причина візиту</span>
+      <span class="field__select">
+        <select name="reason">
+          <option value="">Оберіть зі списку</option>
+          {services.filter((s) => !s.shop).map((s) => <option value={s.slug}>{s.name}</option>)}
+          <option value="inshe">Інше, розповім телефоном</option>
+        </select>
+      </span>
+    </label>
+
+    <label class="field field--wide">
+      <span class="field__label">Що турбує <small>(необов’язково)</small></span>
+      <textarea name="message" rows="2" maxlength="600"></textarea>
+    </label>
+  </div>
+
+  <input class="form__trap" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+  <label class="consent">
+    <input type="checkbox" name="consent" required />
+    <span class="consent__box" aria-hidden="true"></span>
+    <span>
+      Даю згоду на обробку моїх персональних даних для запису на прийом відповідно до{' '}
+      <a href="/polityka-konfidentsiinosti/" target="_blank">Політики конфіденційності</a>.
+    </span>
+  </label>
+  <span class="field__error" data-error-for="consent">Без згоди ми не можемо прийняти заявку</span>
+
+  <div class="form__foot">
+    <button class="btn btn--ink" type="submit">
+      <span data-form-label>Записатися на прийом</span>
+      <span class="btn__icon"><Icon name="arrow" /></span>
+    </button>
+    <p class="form__alt">
+      Термінове питання? Телефонуйте:{' '}
+      <a class="num" href={`tel:${site.phone}`}>{site.phoneDisplay}</a>
+    </p>
+  </div>
+
+  <div class="form__state" data-form-state role="status" aria-live="polite" hidden>
+    <p class="form__state-title" data-form-state-title></p>
+    <p data-form-state-text></p>
+    <div class="btn-row">
+      <a class="btn btn--ink" href={`tel:${site.phone}`}
+        ><span class="num">{site.phoneDisplay}</span><span class="btn__icon"><Icon name="phone" /></span></a
+      >
+      <a class="btn btn--line" href={site.links.viber}
+        ><span>Написати у Viber</span><span class="btn__icon"><Icon name="chat" /></span></a
+      >
+    </div>
+  </div>
+</form>
+
+<style>
+  .form {
+    position: relative;
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .form__fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem clamp(1rem, 2vw, 2rem);
+  }
+
+  .field {
+    display: grid;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+
+  .field--wide {
+    grid-column: 1 / -1;
+  }
+
+  .field__label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .field__label small {
+    font-size: inherit;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    opacity: 0.8;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 0.85rem 0 0.9rem;
+    border: 0;
+    border-bottom: 2px solid var(--fg);
+    border-radius: 0;
+    background: transparent;
+    font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+    font-weight: 550;
+    letter-spacing: -0.02em;
+    outline: none;
+    appearance: none;
+    transition: border-color 0.3s;
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 3.4rem;
+    line-height: 1.35;
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: var(--fg);
+    opacity: 0.55;
+  }
+
+  .field input:focus-visible,
+  .field select:focus-visible,
+  .field textarea:focus-visible {
+    border-bottom-color: var(--accent);
+    box-shadow: 0 2px 0 var(--accent);
+  }
+
+  .field__select {
+    position: relative;
+    display: block;
+  }
+
+  .field__select::after {
+    content: '';
+    position: absolute;
+    right: 0.25rem;
+    top: 50%;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
+  }
+
+  .field select {
+    padding-right: 2rem;
+    cursor: pointer;
+  }
+
+  .field select option {
+    color: #1a0b07;
+    background: #fff;
+  }
+
+  .field__error {
+    display: none;
+    font-size: 0.875rem;
+    font-weight: 650;
+  }
+
+  :global(.is-invalid) > .field__error,
+  .field__error.is-on {
+    display: block;
+  }
+
+  .field__error::before {
+    content: '↑ ';
+  }
+
+  .form__trap {
+    position: absolute;
+    left: -200vw;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+
+  .consent {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.85rem;
+    align-items: start;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    cursor: pointer;
+    max-width: 62ch;
+  }
+
+  .consent input {
+    position: absolute;
+    opacity: 0;
+    width: 1.6rem;
+    height: 1.6rem;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .consent__box {
+    position: relative;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 7px;
+    box-shadow: inset 0 0 0 2px var(--fg);
+    transition: background-color 0.25s;
+  }
+
+  .consent__box::after {
+    content: '';
+    position: absolute;
+    left: 0.52rem;
+    top: 0.22rem;
+    width: 0.45rem;
+    height: 0.85rem;
+    border-right: 2.5px solid var(--bg);
+    border-bottom: 2.5px solid var(--bg);
+    transform: rotate(45deg) scale(0);
+    transition: transform 0.35s var(--ease-out);
+  }
+
+  .consent input:checked + .consent__box {
+    background: var(--fg);
+  }
+
+  .consent input:checked + .consent__box::after {
+    transform: rotate(45deg) scale(1);
+  }
+
+  .consent input:focus-visible + .consent__box {
+    outline: 3px solid var(--fg);
+    outline-offset: 3px;
+  }
+
+  .consent a {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .form__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+    margin-top: 0.5rem;
+  }
+
+  .form__alt {
+    font-size: 0.95rem;
+  }
+
+  .form__alt a {
+    font-weight: 750;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    white-space: nowrap;
+  }
+
+  .form[aria-busy='true'] button[type='submit'] {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  /* Стан після надсилання перекриває форму */
+  .form__state {
+    position: absolute;
+    inset: -0.5rem;
+    z-index: 2;
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: 1rem;
+    padding: 0.5rem;
+    background: var(--bg);
+  }
+
+  .form__state[hidden] {
+    display: none;
+  }
+
+  .form__state-title {
+    font-size: clamp(2rem, 4.4vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.045em;
+    font-weight: 500;
+    max-width: 14ch;
+  }
+
+  .form__state p:not(.form__state-title) {
+    max-width: 44ch;
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 640px) {
+    .form__fields {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

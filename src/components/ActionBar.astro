@@ -1,0 +1,12 @@
+---
+// Панель дій унизу екрана на телефоні: дзвінок, Viber, маршрут і запис завжди під пальцем.
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+---
+
+<nav class="actions" aria-label="Швидкі дії">
+  <a href={`tel:${site.phone}`}><Icon name="phone" />Подзвонити</a>
+  <a href={site.links.viber}><Icon name="chat" />Viber</a>
+  <a href={site.links.route} target="_blank" rel="noopener"><Icon name="pin" />Маршрут</a>
+  <a class="actions__main" href="/zapys/"><Icon name="calendar" />Запис</a>
+</nav>

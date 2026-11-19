@@ -1,0 +1,170 @@
+---
+// «Як проходить перший візит». Знімає тривогу перед першим дзвінком:
+// людина бачить, що буде на кожному кроці та скільки це коштує.
+import Button from '../Button.astro';
+import { site } from '../../data/site';
+
+const steps = [
+  {
+    title: 'Запис',
+    text: 'Зателефонуйте, напишіть у Viber або залиште заявку на сайті. Запитаємо, хто пацієнт і що турбує, та підберемо час.',
+    tag: site.phoneDisplay,
+    tone: 'white',
+  },
+  {
+    title: 'Прийом',
+    text: 'Лікар оглядає тварину й розпитує про все, що ви помітили вдома: апетит, поведінку, будь-які дрібниці.',
+    tag: 'до 30 хв — 550 грн',
+    tone: 'ink',
+  },
+  {
+    title: 'План і вартість',
+    text: 'Пояснюємо, що відбувається і які є варіанти. Якщо потрібні аналізи чи процедури, називаємо суму й робимо їх лише після вашої згоди.',
+    tag: 'нічого без погодження',
+    tone: 'wine',
+  },
+  {
+    title: 'Після візиту',
+    text: 'Ви йдете з рекомендаціями та розумінням, що робити далі. Якщо з’являться питання, їх можна обговорити на повторному огляді або онлайн.',
+    tag: 'повторний огляд — 350 грн',
+    tone: 'white',
+  },
+];
+---
+
+<section class="section t-orange steps">
+  <div class="wrap steps__grid">
+    <div class="steps__head">
+      <p class="eyebrow">Перший візит</p>
+      <h2 class="h2" data-split>Що буде, коли ви прийдете</h2>
+      <p class="lead" data-reveal>Чотири кроки без сюрпризів. Від дзвінка до рекомендацій, з якими ви підете додому.</p>
+      <div data-reveal>
+        <Button href="/zapys/" variant="white" icon="calendar">Записатися на прийом</Button>
+      </div>
+    </div>
+
+    <ol class="steps__list">
+      {
+        steps.map((step, i) => (
+          <li class:list={['step', `step--${step.tone}`]} style={`--i:${i}`} data-step>
+            <span class="step__num num">{String(i + 1).padStart(2, '0')}</span>
+            <div class="step__body">
+              <h3 class="h3">{step.title}</h3>
+              <p>{step.text}</p>
+              <span class="step__tag num">{step.tag}</span>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .steps__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    gap: 3rem var(--gutter);
+    align-items: start;
+  }
+
+  .steps__head {
+    position: sticky;
+    top: clamp(6.5rem, 9vw, 9rem);
+    display: grid;
+    gap: 1.5rem;
+    justify-items: start;
+  }
+
+  .steps__head .lead {
+    max-width: 30ch;
+  }
+
+  .steps__list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .step {
+    position: sticky;
+    top: calc(clamp(6rem, 8vw, 8rem) + var(--i) * 1.1rem);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: clamp(1.25rem, 3vw, 3rem);
+    min-height: clamp(15rem, 23vw, 21rem);
+    padding: clamp(1.5rem, 2.6vw, 2.75rem);
+    border-radius: calc(var(--radius) * 1.2);
+    transform-origin: 50% 0;
+    will-change: transform;
+  }
+
+  .step--white {
+    background: var(--white);
+    color: var(--ink);
+    --tag: var(--orange);
+    --tag-fg: var(--white);
+  }
+
+  .step--ink {
+    background: var(--ink);
+    color: var(--white);
+    --tag: var(--orange-hot);
+    --tag-fg: var(--ink);
+  }
+
+  .step--wine {
+    background: var(--wine);
+    color: var(--white);
+    --tag: var(--white);
+    --tag-fg: var(--wine);
+  }
+
+  .step__num {
+    font-size: clamp(3rem, 6.4vw, 6.5rem);
+    line-height: 0.8;
+    letter-spacing: -0.06em;
+    font-weight: 500;
+  }
+
+  .step__body {
+    display: grid;
+    gap: 0.9rem;
+    align-content: start;
+    justify-items: start;
+  }
+
+  .step__body p {
+    max-width: 42ch;
+    opacity: 0.86;
+  }
+
+  .step__tag {
+    margin-top: auto;
+    padding: 0.5rem 0.95rem;
+    border-radius: 999px;
+    background: var(--tag);
+    color: var(--tag-fg);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .step__body {
+    height: 100%;
+  }
+
+  @media (max-width: 960px) {
+    .steps__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .steps__head {
+      position: static;
+    }
+
+    .step {
+      top: calc(5.5rem + var(--i) * 0.75rem);
+      min-height: 15.5rem;
+    }
+  }
+</style>

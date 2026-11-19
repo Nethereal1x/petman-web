@@ -1,0 +1,78 @@
+---
+import Base from '../../layouts/Base.astro';
+import ServiceList from '../../components/ServiceList.astro';
+import Cta from '../../components/Cta.astro';
+import Button from '../../components/Button.astro';
+import { site } from '../../data/site';
+import { services } from '../../data/services';
+
+const itemList = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: services.map((s, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: s.name,
+    url: new URL(`/posluhy/${s.slug}/`, site.url).href,
+  })),
+};
+---
+
+<Base
+  title="Послуги ветеринарної клініки у Львові: ціни й запис | Petman"
+  description="Терапія, вакцинація, стерилізація і кастрація, хірургія, стоматологія, аналізи, чекап 8+, грумінг і зоомагазин. Ветеринарна клініка Petman, Львів, вул. Антоновича, 115а."
+  crumbs={[['Послуги', '/posluhy/']]}
+  schema={[itemList]}
+>
+  <section class="page-hero t-wine hub">
+    <div class="wrap">
+      <nav aria-label="Хлібні крихти">
+        <ol class="crumbs">
+          <li><a href="/">Головна</a></li>
+          <li aria-current="page">Послуги</li>
+        </ol>
+      </nav>
+      <div class="hub__head">
+        <h1 class="h1" data-split>Послуги ветеринарної клініки Petman</h1>
+        <div class="hub__side">
+          <p class="lead soft" data-reveal>
+            Дев’ять напрямів для котів і собак. Оберіть свій, щоб побачити ціни та відповіді на часті запитання.
+          </p>
+          <div class="btn-row" data-reveal>
+            <Button href="/tsiny/" variant="hot">Увесь прайс</Button>
+            <Button href={`tel:${site.phone}`} variant="line" icon="phone"><span class="num">{site.phoneDisplay}</span></Button>
+          </div>
+        </div>
+      </div>
+      <ServiceList />
+    </div>
+  </section>
+
+  <Cta title="Не знаєте, що обрати?" text="Опишіть, що турбує, і адміністратор підкаже, до якого лікаря записатися." />
+</Base>
+
+<style>
+  .hub {
+    padding-bottom: var(--section);
+  }
+
+  .hub__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: 2rem var(--gutter);
+    align-items: end;
+    margin-bottom: clamp(2.5rem, 6vw, 5.5rem);
+  }
+
+  .hub__side {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: start;
+  }
+
+  @media (max-width: 860px) {
+    .hub__head {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

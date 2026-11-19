@@ -1,0 +1,64 @@
+---
+// Фінальний блок із формою запису. Стоїть наприкінці головної і сторінок послуг.
+import BookingForm from './BookingForm.astro';
+
+interface Props {
+  title?: string;
+  text?: string;
+  id?: string;
+}
+
+const {
+  title = 'Запишіться на прийом',
+  text = 'Залиште номер, і адміністратор зателефонує в робочий час, щоб підібрати день і годину.',
+  id = 'zapys',
+} = Astro.props;
+---
+
+<section class="section t-orange cta" id={id}>
+  <div class="wrap cta__grid">
+    <div class="cta__head">
+      <p class="eyebrow">Запис</p>
+      <h2 class="h1" data-split>{title}</h2>
+      <p class="lead" data-reveal>{text}</p>
+    </div>
+    <div class="cta__form" data-reveal>
+      <BookingForm id={id} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 3rem var(--gutter);
+    align-items: start;
+  }
+
+  .cta__head {
+    position: sticky;
+    top: clamp(6.5rem, 9vw, 9rem);
+    display: grid;
+    gap: 1.5rem;
+    align-content: start;
+  }
+
+  .cta__head .lead {
+    max-width: 30ch;
+  }
+
+  .cta__form {
+    padding-top: clamp(0rem, 1.5vw, 1.5rem);
+  }
+
+  @media (max-width: 960px) {
+    .cta__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .cta__head {
+      position: static;
+    }
+  }
+</style>

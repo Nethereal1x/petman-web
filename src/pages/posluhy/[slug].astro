@@ -1,0 +1,662 @@
+---
+import Base from '../../layouts/Base.astro';
+import Button from '../../components/Button.astro';
+import Icon from '../../components/Icon.astro';
+import Img from '../../components/Img.astro';
+import PriceTable from '../../components/PriceTable.astro';
+import Calc from '../../components/Calc.astro';
+import Faq from '../../components/Faq.astro';
+import Cta from '../../components/Cta.astro';
+import { services, serviceBySlug, type Service } from '../../data/services';
+import { team } from '../../data/team';
+import { site, uah, formatDate } from '../../data/site';
+import { faqSchema, serviceSchema } from '../../data/schema';
+
+export function getStaticPaths() {
+  return services.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+
+interface Props {
+  service: Service;
+}
+
+const { service } = Astro.props;
+const doctors = service.doctors.map((id) => team.find((m) => m.id === id)!);
+const related = service.related.map(serviceBySlug);
+const hasPrices = service.prices.length > 0;
+const isNeuter = service.slug === 'sterylizatsiia-kastratsiia';
+const { promo } = service;
+const isShop = !!service.shop;
+const schema = [serviceSchema(service), ...(service.faq.length ? [faqSchema(service.faq)] : [])];
+---
+
+<Base
+  title={service.metaTitle}
+  description={service.metaDescription}
+  crumbs={[
+    ['Послуги', '/posluhy/'],
+    [service.name, `/posluhy/${service.slug}/`],
+  ]}
+  schema={schema}
+>
+  <section class="page-hero t-orange svc-hero">
+    <div class="wrap svc-hero__grid">
+      <div class="svc-hero__text">
+        <nav aria-label="Хлібні крихти">
+          <ol class="crumbs">
+            <li><a href="/">Головна</a></li>
+            <li><a href="/posluhy/">Послуги</a></li>
+            <li aria-current="page">{service.name}</li>
+          </ol>
+        </nav>
+        <h1 class="h1" data-split>{service.title}</h1>
+        <p class="lead svc-hero__lead" data-reveal>{service.lead}</p>
+        <div class="btn-row" data-reveal>
+          {
+            isShop ? (
+              <Button href={site.links.instagram} external variant="white" icon="instagram">Асортимент в Instagram</Button>
+            ) : (
+              <Button href={`/zapys/?reason=${service.slug}`} variant="white" icon="calendar">Записатися</Button>
+            )
+          }
+          <Button href={`tel:${site.phone}`} variant="line" icon="phone"><span class="num">{site.phoneDisplay}</span></Button>
+        </div>
+      </div>
+
+      <div class="svc-hero__media">
+        <div class="svc-hero__pic">
+          <div data-parallax="-6">
+            <Img name={service.image} alt={service.imageAlt} sizes="(max-width: 860px) 70vw, 34vw" loading="eager" />
+          </div>
+        </div>
+        <p class="svc-hero__badge num">
+          {
+            service.from ? (
+              <Fragment>
+                <small>від</small>
+                {uah(service.from)}
+              </Fragment>
+            ) : (
+              <small>{service.fromLabel}</small>
+            )
+          }
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {
+    isShop && (
+      <section class="section t-white">
+        <div class="wrap svc-prices">
+          <div class="svc-prices__side">
+            <p class="eyebrow" style="color:var(--orange)">Асортимент</p>
+            <h2 class="h2" data-split>Що є в наявності</h2>
+          </div>
+          <div class="svc-prices__main">
+            <div class="no-price" data-reveal>
+              <p>Новинки й товари показуємо в Instagram @petman.vet.shop. Там же можна написати й запитати про конкретний корм чи засіб. Чи є товар просто зараз, швидше підкажемо телефоном.</p>
+              <div class="btn-row">
+                <Button href={site.links.instagram} external variant="orange" icon="instagram">Відкрити Instagram</Button>
+                <Button href={`tel:${site.phone}`} variant="line" icon="phone"><span class="num">{site.phoneDisplay}</span></Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {!isShop && (
+  <section class="section t-white" id="tsiny">
+    <div class="wrap svc-prices">
+      <div class="svc-prices__side">
+        <p class="eyebrow" style="color:var(--orange)">Ціни</p>
+        <h2 class="h2" data-split>{hasPrices ? 'Скільки це коштує' : 'Про вартість'}</h2>
+        {
+          hasPrices && (
+            <p class="soft" data-reveal>
+              Ціни в гривнях, актуальні на {formatDate(site.pricesUpdated)}.
+            </p>
+          )
+        }
+        <div data-reveal>
+          <a class="more" href="/tsiny/">Увесь прайс клініки <Icon name="arrow" /></a>
+        </div>
+      </div>
+
+      <div class="svc-prices__main">
+        {
+          isNeuter && (
+            <div class="svc-prices__calc" data-reveal>
+              <Calc id="svc-calc" />
+            </div>
+          )
+        }
+
+        {
+          service.includes && (
+            <div class="includes" data-reveal>
+              <div class="includes__price">
+                <p class="eyebrow">{service.name}</p>
+                <p class="includes__num num">{uah(promo ? promo.regular : service.from!)}</p>
+                {
+                  promo &&
+                    (promo.until ? (
+                      <p class="includes__promo">
+                        Акційна вартість до {formatDate(promo.until)}: <strong class="num">{uah(promo.price)}</strong>
+                      </p>
+                    ) : (
+                      <p class="includes__promo">
+                        Зараз діє акційна вартість <strong class="num">{uah(promo.price)}</strong>. Строк акції
+                        уточнюйте в адміністратора.
+                      </p>
+                    ))
+                }
+              </div>
+              <ol class="includes__list">
+                {
+                  service.includes.map((item, i) => (
+                    <li>
+                      <span class="num">{String(i + 1).padStart(2, '0')}</span>
+                      {item}
+                    </li>
+                  ))
+                }
+              </ol>
+            </div>
+          )
+        }
+
+        {hasPrices && !service.includes && <PriceTable groups={service.prices} />}
+
+        {
+          !hasPrices && (
+            <div class="no-price" data-reveal>
+              <p>{service.priceNote}</p>
+              <div class="btn-row">
+                <Button href={`tel:${site.phone}`} variant="orange" icon="phone">Подзвонити</Button>
+                <Button href={site.links.viber} variant="line" icon="chat">Написати у Viber</Button>
+              </div>
+            </div>
+          )
+        }
+
+        {
+          hasPrices && service.priceNote && (
+            <div class="price-meta">
+              <p>{service.priceNote}</p>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  )}
+
+  <section class="section t-wine">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">{isShop ? 'Про магазин' : 'Важливо знати'}</p>
+        <div class="section-head__text">
+          <h2 class="h2" data-split>{isShop ? 'Чому зручно купувати тут' : 'Перш ніж записатися'}</h2>
+        </div>
+      </div>
+      <ol class="points">
+        {
+          service.points.map((point, i) => (
+            <li data-reveal>
+              <span class="points__num num">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="h3">{point.title}</h3>
+              <p class="soft">{point.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  {
+    doctors.length > 0 && (
+      <section class="section t-white">
+        <div class="wrap">
+          <div class="section-head">
+            <p class="eyebrow" style="color:var(--orange)">
+              Команда
+            </p>
+            <div class="section-head__text">
+              <h2 class="h2" data-split>
+                Хто веде цей напрям
+              </h2>
+            </div>
+          </div>
+          <ul class="docs">
+            {doctors.map((m) => (
+              <li data-reveal>
+                <a class="doc" href={`/komanda/#${m.id}`}>
+                  <span class:list={['doc__pic', `doc__pic--${m.tone}`]}>
+                    <Img name={m.image} alt={m.name} sizes="140px" />
+                  </span>
+                  <span class="doc__text">
+                    <strong class="h3">{m.name}</strong>
+                    <span class="soft">
+                      {m.role}. {m.focus.join(', ')}
+                    </span>
+                  </span>
+                  <span class="doc__go">
+                    <Icon name="arrow" />
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  {service.faq.length > 0 && (
+  <section class="section t-white svc-faq">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow" style="color:var(--orange)">Питання</p>
+        <div class="section-head__text">
+          <h2 class="h2" data-split>Часті запитання</h2>
+        </div>
+      </div>
+      <Faq items={service.faq} />
+    </div>
+  </section>
+  )}
+
+  {related.length > 0 && (
+  <section class="section t-ink">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Суміжні послуги</p>
+        <div class="section-head__text">
+          <h2 class="h2" data-split>Може знадобитися</h2>
+        </div>
+      </div>
+      <ul class="related">
+        {
+          related.map((item) => (
+            <li data-reveal>
+              <a href={`/posluhy/${item.slug}/`}>
+                <span class="related__name">{item.name}</span>
+                <span class="soft">{item.summary}</span>
+                <span class="related__price num">{item.from ? `від ${uah(item.from)}` : item.fromLabel}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  )}
+
+  {!isShop && <Cta title={`Записатися: ${service.name.toLowerCase()}`} />}
+</Base>
+
+<style>
+  .svc-hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 3rem var(--gutter);
+    align-items: end;
+  }
+
+  .svc-hero__text {
+    display: grid;
+    gap: 1.75rem;
+    justify-items: start;
+  }
+
+  .svc-hero__text .crumbs {
+    margin-bottom: 0;
+  }
+
+  .svc-hero__lead {
+    max-width: 40ch;
+  }
+
+  .svc-hero__media {
+    position: relative;
+    justify-self: end;
+    width: min(100%, 30rem);
+  }
+
+  .svc-hero__pic {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--wine);
+  }
+
+  .svc-hero__pic :global(div),
+  .svc-hero__pic :global(picture),
+  .svc-hero__pic :global(img) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .svc-hero__pic :global(img) {
+    object-fit: cover;
+    transform: scale(1.16);
+  }
+
+  .svc-hero__badge {
+    position: absolute;
+    left: -6%;
+    bottom: 2%;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    width: clamp(7.5rem, 11vw, 10rem);
+    aspect-ratio: 1;
+    padding: 0.75rem;
+    border-radius: 50%;
+    background: var(--white);
+    color: var(--ink);
+    font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    text-align: center;
+  }
+
+  .svc-hero__badge small {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.2;
+    max-width: 9ch;
+  }
+
+  /* Ціни */
+  .svc-prices {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr);
+    gap: 3rem var(--gutter);
+    align-items: start;
+  }
+
+  .svc-prices__side {
+    position: sticky;
+    top: clamp(6.5rem, 9vw, 9rem);
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+  }
+
+  .svc-prices__main {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .no-price {
+    display: grid;
+    gap: 2rem;
+    padding: clamp(1.75rem, 4vw, 4rem);
+    border-radius: calc(var(--radius) * 1.3);
+    background: var(--ink);
+    color: var(--white);
+    --fg: var(--white);
+    --bg: var(--ink);
+    --line: rgba(255, 255, 255, 0.3);
+  }
+
+  .no-price p {
+    font-size: clamp(1.5rem, 2.9vw, 2.75rem);
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    font-weight: 500;
+    max-width: 24ch;
+  }
+
+  .includes {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    border-radius: calc(var(--radius) * 1.3);
+    overflow: hidden;
+  }
+
+  .includes__price {
+    display: grid;
+    gap: 1rem;
+    align-content: space-between;
+    padding: clamp(1.5rem, 3vw, 3rem);
+    background: var(--orange);
+    color: var(--white);
+  }
+
+  .includes__num {
+    font-size: clamp(3rem, 6vw, 6rem);
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .includes__promo {
+    max-width: 30ch;
+    line-height: 1.4;
+  }
+
+  .includes__list {
+    padding: clamp(1.5rem, 3vw, 3rem);
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  .includes__list li {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    gap: 0.5rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    font-weight: 600;
+    letter-spacing: -0.012em;
+  }
+
+  .includes__list li:last-child {
+    border-bottom: 0;
+  }
+
+  .includes__list span {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--orange-hot);
+    padding-top: 0.2rem;
+  }
+
+  /* Важливо знати */
+  .points {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.5rem var(--gutter);
+  }
+
+  .points li {
+    display: grid;
+    gap: 0.9rem;
+    align-content: start;
+    padding-top: 1.5rem;
+    border-top: 1.5px solid var(--white);
+  }
+
+  .points__num {
+    font-size: clamp(2.75rem, 5vw, 5rem);
+    line-height: 0.85;
+    letter-spacing: -0.06em;
+    font-weight: 500;
+    color: var(--orange-hot);
+    margin-bottom: 0.75rem;
+  }
+
+  /* Лікарі напряму */
+  .docs {
+    border-top: 2px solid var(--ink);
+  }
+
+  .doc {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: clamp(1rem, 2.5vw, 2.5rem);
+    align-items: center;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .doc__pic {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: clamp(5.5rem, 8vw, 8.5rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .doc__pic--orange {
+    background: var(--orange);
+  }
+
+  .doc__pic--ink {
+    background: var(--ink);
+  }
+
+  .doc__pic :global(picture) {
+    width: 92%;
+    transition: transform 0.8s var(--ease-out);
+    transform-origin: 50% 100%;
+  }
+
+  .doc__pic :global(img) {
+    width: 100%;
+    /* показуємо верх портрета: обличчя, а не схрещені руки */
+    margin-bottom: -38%;
+  }
+
+  .doc__text {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .doc__go {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px var(--line);
+    transition:
+      background-color 0.3s,
+      color 0.3s,
+      transform 0.6s var(--ease-out);
+  }
+
+  .doc__go :global(svg) {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  @media (hover: hover) {
+    .doc:hover .doc__go {
+      background: var(--orange);
+      color: var(--white);
+      box-shadow: none;
+      transform: rotate(45deg);
+    }
+
+    .doc:hover .doc__pic :global(picture) {
+      transform: scale(1.08);
+    }
+  }
+
+  .svc-faq {
+    padding-top: 0;
+  }
+
+  /* Суміжні послуги */
+  .related {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .related a {
+    display: grid;
+    gap: 0.75rem;
+    align-content: start;
+    height: 100%;
+    min-height: 15rem;
+    padding: clamp(1.25rem, 2.2vw, 2rem);
+    border-radius: var(--radius);
+    box-shadow: inset 0 0 0 1.5px var(--line);
+    transition:
+      background-color 0.4s,
+      color 0.4s,
+      box-shadow 0.4s;
+  }
+
+  .related__name {
+    font-size: clamp(1.5rem, 2.4vw, 2.3rem);
+    line-height: 1.02;
+    letter-spacing: -0.042em;
+    font-weight: 500;
+  }
+
+  .related__price {
+    margin-top: auto;
+    font-weight: 700;
+    color: var(--orange-hot);
+    transition: color 0.4s;
+  }
+
+  @media (hover: hover) {
+    .related a:hover {
+      background: var(--orange);
+      box-shadow: none;
+    }
+
+    .related a:hover .soft,
+    .related a:hover .related__price {
+      color: var(--white);
+    }
+  }
+
+  @media (max-width: 860px) {
+    .svc-hero__grid,
+    .svc-prices,
+    .includes,
+    .points,
+    .related {
+      grid-template-columns: 1fr;
+    }
+
+    .svc-hero__media {
+      justify-self: start;
+      width: min(78%, 22rem);
+      margin-left: 6%;
+    }
+
+    .svc-prices__side {
+      position: static;
+    }
+
+    .related a {
+      min-height: 0;
+    }
+
+    .doc__go {
+      display: none;
+    }
+
+    .doc {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,183 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/home/Hero.astro';
+import Intro from '../components/home/Intro.astro';
+import Pricing from '../components/home/Pricing.astro';
+import Steps from '../components/home/Steps.astro';
+import Reviews from '../components/home/Reviews.astro';
+import Extras from '../components/home/Extras.astro';
+import ServiceList from '../components/ServiceList.astro';
+import TeamGrid from '../components/TeamGrid.astro';
+import Location from '../components/Location.astro';
+import Faq from '../components/Faq.astro';
+import Cta from '../components/Cta.astro';
+import Icon from '../components/Icon.astro';
+import Img from '../components/Img.astro';
+import manifest from '../data/images.json';
+import { websiteSchema, faqSchema } from '../data/schema';
+
+const faq = [
+  {
+    q: 'Де розташована клініка Petman?',
+    a: 'Львів, вул. Антоновича, 115а. Навесні 2026 року ми переїхали сюди з Городоцької, 209, тож у деяких каталогах ще може бути стара адреса.',
+  },
+  {
+    q: 'Коли ви працюєте?',
+    a: 'З понеділка по п’ятницю з 10:00 до 20:00, у суботу з 10:00 до 18:00. Неділя — вихідний.',
+  },
+  {
+    q: 'Скільки коштує прийом ветеринара?',
+    a: 'Прийом до 30 хвилин коштує 550 грн, розгорнута консультація понад 30 хвилин — 750 грн, повторний огляд — 350 грн. У прийом входить огляд, збір анамнезу, план лікування та рекомендації.',
+  },
+  {
+    q: 'Чи можна дізнатися вартість лікування заздалегідь?',
+    a: 'Так. Ми пояснюємо рекомендований план лікування і погоджуємо з вами додаткові послуги та їхню вартість до того, як щось робити. Ціни на основні послуги є в прайсі на сайті.',
+  },
+  {
+    q: 'Чи виїжджаєте ви додому?',
+    a: 'Так, виклик ветеринарного лікаря додому коштує від 1500 грн. Є також онлайн-консультація за 450 грн.',
+  },
+  {
+    q: 'Яких тварин ви приймаєте?',
+    a: 'Ми лікуємо котів і собак.',
+  },
+  {
+    q: 'Чи є в Petman грумінг і зоомагазин?',
+    a: 'Так, грумінг-салон і зоомагазин працюють у тому ж приміщенні, що й клініка.',
+  },
+];
+---
+
+<Base
+  title="Ветеринарна клініка у Львові Petman — Антоновича, 115а"
+  description="Petman — ветеринарна клініка для котів і собак у Львові. Прийом від 550 грн, стерилізація, стоматологія, аналізи, чекап 8+, грумінг. Пн–Пт 10–20, Сб 10–18. Запис: 066 467 79 26."
+  schema={[websiteSchema, faqSchema(faq)]}
+  preloadImage={{ name: 'dog-lab', widths: manifest['dog-lab'].widths, sizes: '(max-width: 860px) 74vw, 46vw' }}
+>
+  <div class="opening">
+    <Hero />
+    <Intro />
+  </div>
+
+  <section class="section t-wine" id="posluhy">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Послуги</p>
+        <div class="section-head__text">
+          <h2 class="h2" data-split>З чим ми допоможемо</h2>
+          <p class="lead soft" data-reveal>
+            Від першого щеплення до підтримки у старшому віці. У кожного напряму є своя сторінка з цінами.
+          </p>
+        </div>
+      </div>
+      <ServiceList />
+    </div>
+  </section>
+
+  <Pricing />
+  <Steps />
+
+  <section class="section t-white" id="komanda">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow" style="color:var(--orange)">Команда</p>
+        <div class="section-head__text">
+          <h2 class="h2" data-split>Люди, яким можна довірити найдорожче</h2>
+          <p class="lead soft" data-reveal>
+            У кожного з нас удома теж хтось чекає з хвостом. Наведіть на фото, щоб дізнатися хто.
+          </p>
+          <div data-reveal>
+            <a class="more" href="/komanda/">Познайомитися з командою <Icon name="arrow" /></a>
+          </div>
+        </div>
+      </div>
+      <TeamGrid />
+    </div>
+  </section>
+
+  <Reviews />
+
+  <section class="section t-white" id="kontakty">
+    <div class="wrap">
+      <Location />
+    </div>
+  </section>
+
+  <Extras />
+
+  <section class="section t-white faq-sec" id="pytannia">
+    <div class="wrap faq-sec__grid">
+      <div class="faq-sec__side">
+        <p class="eyebrow" style="color:var(--orange)">Питання</p>
+      </div>
+      <div class="faq-sec__main">
+        <h2 class="h2" data-split>Що питають перед першим візитом</h2>
+        <Faq items={faq} />
+      </div>
+    </div>
+    <div class="faq-sec__cat" aria-hidden="true">
+      <div data-parallax="5">
+        <Img name="cat-tabby" alt="" sizes="(max-width: 960px) 0px, 24vw" />
+      </div>
+    </div>
+  </section>
+
+  <Cta />
+</Base>
+
+<style>
+  /* Перший екран липне до верху, а наступний блок наїжджає на нього колом */
+  .opening {
+    position: relative;
+  }
+
+  /* Питання: кіт визирає з лівого краю. Фото зняте на білому, тож на білому тлі край чистий */
+  .faq-sec {
+    overflow: hidden;
+  }
+
+  .faq-sec__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr);
+    gap: 1.5rem var(--gutter);
+    align-items: start;
+  }
+
+  .faq-sec__side .eyebrow {
+    padding-top: 0.9em;
+  }
+
+  .faq-sec__main {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .faq-sec__cat {
+    position: absolute;
+    left: -3vw;
+    bottom: -9vw;
+    width: clamp(14rem, 25vw, 26rem);
+    pointer-events: none;
+  }
+
+  .faq-sec__cat :global(img) {
+    width: 100%;
+    transform: scaleX(-1);
+  }
+
+  @media (max-width: 960px) {
+    .faq-sec__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .faq-sec__side .eyebrow {
+      padding-top: 0;
+    }
+
+    .faq-sec__cat {
+      display: none;
+    }
+  }
+</style>

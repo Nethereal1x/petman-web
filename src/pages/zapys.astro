@@ -1,0 +1,139 @@
+---
+import Base from '../layouts/Base.astro';
+import BookingForm from '../components/BookingForm.astro';
+import Img from '../components/Img.astro';
+import { site } from '../data/site';
+---
+
+<Base
+  title="Запис на прийом до ветеринара у Львові | Petman"
+  description="Запишіться на прийом у ветеринарну клініку Petman у Львові: залиште ім’я, телефон і причину візиту, адміністратор зателефонує. Або дзвоніть: 066 467 79 26."
+  crumbs={[['Запис на прийом', '/zapys/']]}
+>
+  <section class="page-hero t-orange zp">
+    <div class="wrap zp__grid">
+      <div class="zp__head">
+        <nav aria-label="Хлібні крихти">
+          <ol class="crumbs">
+            <li><a href="/">Головна</a></li>
+            <li aria-current="page">Запис</li>
+          </ol>
+        </nav>
+        <h1 class="h1" data-split>Запис на прийом</h1>
+        <p class="lead" data-reveal>
+          Залиште номер, і адміністратор зателефонує в робочий час, щоб підібрати день і годину.
+        </p>
+
+        <ol class="zp__next" data-reveal>
+          <li><span class="num">01</span>Ви залишаєте заявку</li>
+          <li><span class="num">02</span>Ми телефонуємо й узгоджуємо час</li>
+          <li><span class="num">03</span>Ви приходите на Антоновича, 115а</li>
+        </ol>
+
+        <p class="zp__urgent" data-reveal>
+          Тварині погано просто зараз? Не чекайте дзвінка, телефонуйте:{' '}
+          <a class="num" href={`tel:${site.phone}`}>{site.phoneDisplay}</a>
+        </p>
+
+        <div class="zp__dog" aria-hidden="true" data-parallax="4">
+          <Img name="dog-golden" alt="" sizes="(max-width: 960px) 0px, 20vw" loading="eager" />
+        </div>
+      </div>
+
+      <div class="zp__form" data-reveal>
+        <BookingForm id="zapys-page" />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .zp {
+    min-height: 100svh;
+    padding-bottom: var(--section);
+  }
+
+  .zp__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: 3rem var(--gutter);
+    align-items: start;
+  }
+
+  .zp__head {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: start;
+  }
+
+  .zp__head .crumbs {
+    margin-bottom: 0;
+  }
+
+  .zp__head .lead {
+    max-width: 30ch;
+  }
+
+  .zp__next {
+    width: 100%;
+    max-width: 30rem;
+    margin-top: 0.5rem;
+    border-top: 1.5px solid var(--white);
+  }
+
+  .zp__next li {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--line);
+    font-weight: 600;
+    letter-spacing: -0.012em;
+  }
+
+  .zp__next span {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding-top: 0.25rem;
+  }
+
+  .zp__urgent {
+    max-width: 30rem;
+    padding: 1.1rem 1.35rem;
+    border-radius: var(--radius);
+    background: var(--ink);
+    color: var(--white);
+    line-height: 1.4;
+  }
+
+  .zp__urgent a {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+  }
+
+  .zp__dog {
+    width: clamp(11rem, 19vw, 19rem);
+    margin-top: 1rem;
+    margin-bottom: calc(var(--section) * -1);
+  }
+
+  .zp__form {
+    padding-top: clamp(0rem, 4.5vw, 5rem);
+  }
+
+  @media (max-width: 960px) {
+    .zp__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .zp__dog {
+      display: none;
+    }
+
+    .zp__form {
+      order: 0;
+    }
+  }
+</style>

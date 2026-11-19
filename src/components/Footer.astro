@@ -1,0 +1,106 @@
+---
+import Button from './Button.astro';
+import { site, formatDate } from '../data/site';
+import { services } from '../data/services';
+
+const year = new Date().getFullYear();
+const { legal } = site;
+---
+
+<footer class="ftr t-ink">
+  <div class="wrap">
+    <div class="ftr__top">
+      <div class="ftr__lead">
+        <p>Турбуєтесь за улюбленця? Подзвоніть, розберемося разом.</p>
+        <Button href={`tel:${site.phone}`} variant="hot" icon="phone"><span class="num">{site.phoneDisplay}</span></Button>
+      </div>
+
+      <nav class="ftr__col" aria-label="Послуги">
+        <h2>Послуги</h2>
+        <ul>
+          {
+            services.map((s) => (
+              <li>
+                <a href={`/posluhy/${s.slug}/`}>{s.name}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <nav class="ftr__col" aria-label="Клініка">
+        <h2>Клініка</h2>
+        <ul>
+          <li><a href="/tsiny/">Ціни</a></li>
+          <li><a href="/komanda/">Команда</a></li>
+          <li><a href="/kontakty/">Контакти і маршрут</a></li>
+          <li><a href="/zapys/">Запис на прийом</a></li>
+          <li><a href={site.links.maps} target="_blank" rel="noopener">Відгуки в Google</a></li>
+          <li><a href="/polityka-konfidentsiinosti/">Політика конфіденційності</a></li>
+        </ul>
+      </nav>
+
+      <div class="ftr__col">
+        <h2>Контакти</h2>
+        <address>
+          <a class="ftr__big num" href={`tel:${site.phone}`}>{site.phoneDisplay}</a>
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+          <a href={site.links.route} target="_blank" rel="noopener">{site.address.city}, {site.address.street}</a>
+          <span class="soft">Пн–Пт 10:00–20:00<br />Сб 10:00–18:00, Нд вихідний</span>
+        </address>
+        <ul class="ftr__social">
+          <li><a href={site.links.instagram} target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href={site.links.telegram} target="_blank" rel="noopener">Telegram</a></li>
+          <li><a href={site.links.viber}>Viber</a></li>
+          <li><a href={site.links.tiktok} target="_blank" rel="noopener">TikTok</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ftr__legal">
+      <span>© {year} Petman, ветеринарна клініка у Львові</span>
+      <span>{legal.owner || <span class="todo">ФОП: вказати ПІБ</span>}</span>
+      <span>
+        {legal.taxId ? `РНОКПП ${legal.taxId}` : <span class="todo">РНОКПП / ЄДРПОУ</span>}
+      </span>
+      <span>
+        {legal.license ? legal.license : <span class="todo">Ліцензія на ветпрактику: №, дата</span>}
+      </span>
+      <span>Ціни актуальні на {formatDate(site.pricesUpdated)}</span>
+    </div>
+  </div>
+  <span class="ftr__word" aria-hidden="true" data-footer-word>Petman</span>
+</footer>
+
+<style>
+  .ftr__social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .ftr__social li {
+    margin: 0;
+  }
+
+  .ftr__social a {
+    display: block;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1.5px var(--line);
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition:
+      background-color 0.3s,
+      color 0.3s;
+  }
+
+  @media (hover: hover) {
+    .ftr__social a:hover {
+      background: var(--orange-hot);
+      color: var(--ink);
+      box-shadow: none;
+    }
+  }
+</style>

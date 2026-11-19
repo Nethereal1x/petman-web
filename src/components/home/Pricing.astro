@@ -1,0 +1,131 @@
+---
+// «Скільки це коштує?» — калькулятор операцій і п'ять цін, які питають найчастіше.
+import Calc from '../Calc.astro';
+import Icon from '../Icon.astro';
+import { site, uah, formatDate } from '../../data/site';
+
+const popular: [string, string, string][] = [
+  ['Прийом ветеринарного лікаря до 30 хв', uah(550), '/posluhy/terapiia/'],
+  ['Повторний огляд', uah(350), '/posluhy/terapiia/'],
+  ['Аналіз крові з біохімією, 16 показників', uah(850), '/posluhy/laboratorna-diahnostyka/'],
+  ['Ультразвукова чистка зубів', `від ${uah(2200)}`, '/posluhy/stomatolohiia/'],
+  ['Чекап 8+ для кота або собаки', uah(2190), '/posluhy/chekap/'],
+];
+---
+
+<section class="section t-white pricing" id="tsiny">
+  <div class="wrap pricing__grid">
+    <div class="pricing__side">
+      <p class="eyebrow">Ціни</p>
+      <h2 class="h2" data-split>Спершу ціна, потім процедура</h2>
+      <p class="lead soft" data-reveal>
+        Вартість планової операції можна порахувати просто тут. Для котів вона фіксована, для собак залежить від ваги.
+      </p>
+
+      <ul class="popular" data-reveal>
+        {
+          popular.map(([name, price, href]) => (
+            <li>
+              <a class="popular__row" href={href}>
+                <span class="popular__name">{name}</span>
+                <span class="popular__price num">{price}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="pricing__more" data-reveal>
+        <a class="more" href="/tsiny/">Увесь прайс <Icon name="arrow" /></a>
+        <span class="soft">Актуально на {formatDate(site.pricesUpdated)}</span>
+      </div>
+    </div>
+
+    <div class="pricing__calc" data-reveal>
+      <Calc id="home-calc" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .pricing__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+    gap: 3rem var(--gutter);
+    align-items: start;
+  }
+
+  .pricing__side {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: start;
+  }
+
+  .pricing__side .eyebrow {
+    color: var(--orange);
+  }
+
+  .pricing__side .lead {
+    max-width: 34ch;
+  }
+
+  .pricing__calc {
+    position: sticky;
+    top: 6.5rem;
+  }
+
+  .popular {
+    width: 100%;
+    margin-top: 1rem;
+    border-top: 2px solid var(--ink);
+  }
+
+  .popular__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1.5rem;
+    align-items: baseline;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line);
+    transition:
+      padding 0.5s var(--ease-out),
+      color 0.3s;
+  }
+
+  .popular__name {
+    font-weight: 600;
+    letter-spacing: -0.012em;
+  }
+
+  .popular__price {
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  @media (hover: hover) {
+    .popular__row:hover {
+      padding-left: 0.75rem;
+      color: var(--orange);
+    }
+  }
+
+  .pricing__more {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.75rem;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 960px) {
+    .pricing__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .pricing__calc {
+      position: static;
+      order: -1;
+    }
+  }
+</style>

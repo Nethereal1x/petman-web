@@ -1,0 +1,189 @@
+---
+// Адреса, графік із підсвіченим сьогоднішнім днем, маршрут і карта.
+// Карта підвантажується лише тоді, коли блок наближається до екрана.
+import Button from './Button.astro';
+import { site } from '../data/site';
+
+interface Props {
+  heading?: 'h1' | 'h2';
+}
+
+const { heading = 'h2' } = Astro.props;
+const Tag = heading;
+
+const week = [
+  ['Понеділок', 1],
+  ['Вівторок', 2],
+  ['Середа', 3],
+  ['Четвер', 4],
+  ['П’ятниця', 5],
+  ['Субота', 6],
+  ['Неділя', 7],
+] as const;
+
+const hoursFor = (day: number) => {
+  const h = site.hours.find((item) => (item.days as readonly number[]).includes(day));
+  return h?.open ? `${h.open}–${h.close}` : 'вихідний';
+};
+---
+
+<div class="loc">
+  <div class="loc__info">
+    <p class="eyebrow">Як нас знайти</p>
+    <Tag class="h2 loc__addr" data-split>{site.address.city}, {site.address.street}</Tag>
+    <p class="loc__moved" data-reveal>
+      Навесні 2026 року ми переїхали з Городоцької, 209. Якщо в навігаторі чи каталозі ще стара адреса, їдьте на
+      Антоновича.
+    </p>
+
+    <div class="btn-row" data-reveal>
+      <Button href={site.links.route} variant="orange" icon="pin" external>Прокласти маршрут</Button>
+      <Button href={`tel:${site.phone}`} variant="line" icon="phone"><span class="num">{site.phoneDisplay}</span></Button>
+      <Button href={site.links.viber} variant="line" icon="chat">Viber</Button>
+    </div>
+
+    <table class="hours" data-hours data-reveal>
+      <caption class="sr-only">Графік роботи</caption>
+      <tbody>
+        {
+          week.map(([label, day]) => (
+            <tr data-day={day}>
+              <th scope="row">{label}</th>
+              <td class="num">{hoursFor(day)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="loc__map" data-map data-src={site.links.mapEmbed} data-reveal>
+    <div class="loc__placeholder">
+      <span class="loc__pin" aria-hidden="true"></span>
+      <p>{site.address.street}</p>
+      <a class="link" href={site.links.maps} target="_blank" rel="noopener">Відкрити в Google Картах</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .loc {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 3rem var(--gutter);
+    align-items: stretch;
+  }
+
+  .loc__info {
+    display: grid;
+    gap: 1.5rem;
+    align-content: start;
+    justify-items: start;
+  }
+
+  .loc__info .eyebrow {
+    color: var(--orange);
+  }
+
+  .loc__addr {
+    max-width: 12ch;
+  }
+
+  .loc__moved {
+    max-width: 44ch;
+    color: var(--soft);
+  }
+
+  .hours {
+    width: 100%;
+    margin-top: 1rem;
+    border-collapse: collapse;
+    border-top: 2px solid var(--ink);
+  }
+
+  .hours th,
+  .hours td {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    font-weight: 550;
+  }
+
+  .hours td {
+    text-align: right;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
+  .hours :global(tr.is-today) th,
+  .hours :global(tr.is-today) td {
+    color: var(--orange);
+  }
+
+  .hours :global(tr.is-today) th::after {
+    content: 'сьогодні';
+    margin-left: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: var(--orange);
+    color: var(--white);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    vertical-align: middle;
+  }
+
+  .loc__map {
+    position: relative;
+    min-height: clamp(22rem, 46vw, 44rem);
+    border-radius: calc(var(--radius) * 1.3);
+    overflow: hidden;
+    background: var(--orange);
+    color: var(--white);
+  }
+
+  .loc__map :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .loc__placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .loc__placeholder p {
+    font-size: clamp(1.5rem, 2.6vw, 2.4rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+  }
+
+  .loc__pin {
+    width: 3.25rem;
+    height: 3.25rem;
+    margin-bottom: 0.75rem;
+    border-radius: 50% 50% 50% 0;
+    background: var(--white);
+    transform: rotate(-45deg);
+    box-shadow: inset 0 0 0 1rem var(--white), inset 0 0 0 2rem var(--orange);
+  }
+
+  @media (max-width: 960px) {
+    .loc {
+      grid-template-columns: 1fr;
+    }
+
+    .loc__map {
+      min-height: 24rem;
+    }
+  }
+</style>

@@ -1,0 +1,233 @@
+---
+import Base from '../layouts/Base.astro';
+import Location from '../components/Location.astro';
+import Cta from '../components/Cta.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+
+const { legal } = site;
+const channels = [
+  { label: 'Телефон', value: site.phoneDisplay, href: `tel:${site.phone}`, note: 'Найшвидший спосіб записатися' },
+  { label: 'Viber', value: 'Написати у Viber', href: site.links.viber, note: 'Відповідаємо в робочий час' },
+  { label: 'Telegram', value: '@petmanLviv', href: site.links.telegram, note: 'Новини клініки', ext: true },
+  { label: 'Instagram', value: '@petman.vet.shop', href: site.links.instagram, note: 'Пацієнти і зоомагазин', ext: true },
+  { label: 'Пошта', value: site.email.replace('@', '@\u200B'), href: `mailto:${site.email}`, note: 'Для документів і довших листів' },
+];
+---
+
+<Base
+  title="Контакти ветеринарної клініки Petman — Львів, Антоновича, 115а"
+  description="Ветеринарна клініка Petman: Львів, вул. Антоновича, 115а. Телефон 066 467 79 26, Viber, Telegram. Пн–Пт 10:00–20:00, Сб 10:00–18:00. Маршрут і карта."
+  crumbs={[['Контакти', '/kontakty/']]}
+>
+  <section class="page-hero t-white ct">
+    <div class="wrap">
+      <nav aria-label="Хлібні крихти">
+        <ol class="crumbs">
+          <li><a href="/">Головна</a></li>
+          <li aria-current="page">Контакти</li>
+        </ol>
+      </nav>
+      <Location heading="h1" />
+    </div>
+  </section>
+
+  <section class="section t-wine">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Зв’язок</p>
+        <div class="section-head__text">
+          <h2 class="h2" data-split>Як вам зручніше</h2>
+        </div>
+      </div>
+      <ul class="channels">
+        {
+          channels.map((c) => (
+            <li data-reveal>
+              <a href={c.href} {...(c.ext ? { target: '_blank', rel: 'noopener' } : {})}>
+                <span class="eyebrow">{c.label}</span>
+                <span class="channels__value num">{c.value}</span>
+                <span class="soft">{c.note}</span>
+                <span class="channels__go">
+                  <Icon name="arrow" />
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section t-white">
+    <div class="wrap legal">
+      <div>
+        <p class="eyebrow" style="color:var(--orange)">Реквізити</p>
+        <h2 class="h2" data-split>Хто надає послуги</h2>
+      </div>
+      <dl class="legal__list" data-reveal>
+        <div>
+          <dt>Надавач послуг</dt>
+          <dd>{legal.owner || <span class="todo">ФОП: вказати ПІБ</span>}</dd>
+        </div>
+        <div>
+          <dt>РНОКПП / ЄДРПОУ</dt>
+          <dd>{legal.taxId || <span class="todo">вказати код</span>}</dd>
+        </div>
+        <div>
+          <dt>Ліцензія на ветеринарну практику</dt>
+          <dd>{legal.license || <span class="todo">вказати номер, дату і хто видав</span>}</dd>
+        </div>
+        <div>
+          <dt>Адреса</dt>
+          <dd>{site.address.postalCode}, {site.address.city}, {site.address.street}</dd>
+        </div>
+        <div>
+          <dt>Телефон і пошта</dt>
+          <dd>
+            <a class="link num" href={`tel:${site.phone}`}>{site.phoneDisplay}</a>,{' '}
+            <a class="link" href={`mailto:${site.email}`}>{site.email}</a>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <Cta />
+</Base>
+
+<style>
+  .ct {
+    padding-bottom: var(--section);
+  }
+
+  .channels {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    border-top: 1.5px solid var(--white);
+  }
+
+  .channels a {
+    position: relative;
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+    height: 100%;
+    min-height: 15rem;
+    padding: 1.5rem 1.25rem 1.5rem 0;
+    transition:
+      background-color 0.4s,
+      color 0.4s,
+      padding 0.5s var(--ease-out);
+  }
+
+  .channels li + li a {
+    padding-left: 1.25rem;
+    border-left: 1px solid var(--line);
+  }
+
+  .channels__value {
+    font-size: clamp(1.15rem, 1.6vw, 1.6rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+    overflow-wrap: break-word;
+    margin-top: 0.75rem;
+  }
+
+  .channels__go {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-top: auto;
+    border-radius: 50%;
+    background: var(--orange-hot);
+    color: var(--ink);
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  .channels__go :global(svg) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  @media (hover: hover) {
+    .channels a:hover {
+      background: var(--orange);
+      padding-left: 1.25rem;
+    }
+
+    .channels a:hover .soft {
+      color: var(--white);
+    }
+
+    .channels a:hover .channels__go {
+      transform: rotate(45deg);
+      background: var(--white);
+    }
+  }
+
+  .legal {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    gap: 2.5rem var(--gutter);
+    align-items: start;
+  }
+
+  .legal > div {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .legal__list {
+    border-top: 2px solid var(--ink);
+  }
+
+  .legal__list div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: 0.5rem 2rem;
+    padding: 1.05rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .legal__list dt {
+    color: var(--soft);
+  }
+
+  .legal__list dd {
+    font-weight: 650;
+    letter-spacing: -0.012em;
+  }
+
+  @media (max-width: 1080px) {
+    .channels {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .channels a {
+      min-height: 12rem;
+      padding-left: 0 !important;
+      border-left: 0 !important;
+      border-bottom: 1px solid var(--line);
+    }
+  }
+
+  @media (max-width: 860px) {
+    .legal,
+    .legal__list div {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .channels {
+      grid-template-columns: 1fr;
+    }
+
+    .channels a {
+      min-height: 0;
+    }
+  }
+</style>

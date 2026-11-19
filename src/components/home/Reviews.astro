@@ -1,0 +1,190 @@
+---
+// Відгуки. Оцінка і кількість беруться з картки Google, а кнопка веде просто туди,
+// щоб кожен міг перевірити їх сам.
+import Button from '../Button.astro';
+import Icon from '../Icon.astro';
+import { site, formatDate } from '../../data/site';
+import { reviews } from '../../data/team';
+
+const { rating } = site;
+---
+
+<section class="section t-wine reviews">
+  <div class="wrap reviews__grid">
+    <div class="reviews__score">
+      <p class="eyebrow">Відгуки</p>
+      <p class="reviews__num num" aria-label={`Оцінка ${String(rating.value).replace('.', ',')} з 5`}>
+        <span data-count={rating.value} data-decimals="1">{String(rating.value).replace('.', ',')}</span>
+      </p>
+      <p class="reviews__meta">
+        <span class="stars" aria-hidden="true">★★★★★</span>
+        {rating.count} відгуки в Google, {rating.fiveStar} з них на п’ять зірок.
+        <span class="soft">Станом на {formatDate(rating.asOf)}.</span>
+      </p>
+      <Button href={site.links.maps} variant="hot" external>Усі відгуки в Google</Button>
+    </div>
+
+    <div class="reviews__slider" data-slider>
+      <div class="reviews__track">
+        {
+          reviews.map((r, i) => (
+            <figure class:list={['review', { 'is-on': i === 0 }]} data-slide aria-hidden={i === 0 ? 'false' : 'true'}>
+              <blockquote>
+                <p>{r.text}</p>
+              </blockquote>
+              <figcaption>
+                <strong>{r.author}</strong>
+                <span class="soft">{r.meta}</span>
+              </figcaption>
+            </figure>
+          ))
+        }
+      </div>
+
+      <div class="reviews__nav">
+        <span class="reviews__count num"><span data-slider-index>1</span> / {reviews.length}</span>
+        <button type="button" data-slider-prev aria-label="Попередній відгук"><Icon name="left" /></button>
+        <button type="button" data-slider-next aria-label="Наступний відгук"><Icon name="right" /></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .reviews__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
+    gap: 3rem var(--gutter);
+    align-items: start;
+  }
+
+  .reviews__score {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+  }
+
+  .reviews__num {
+    font-size: clamp(7rem, 17vw, 17.5rem);
+    line-height: 0.78;
+    letter-spacing: -0.075em;
+    font-weight: 500;
+    color: var(--orange-hot);
+    margin-left: -0.04em;
+  }
+
+  .reviews__meta {
+    max-width: 30ch;
+    line-height: 1.45;
+  }
+
+  .stars {
+    display: block;
+    font-size: 1.35rem;
+    letter-spacing: 0.12em;
+    color: var(--orange-hot);
+    margin-bottom: 0.4rem;
+  }
+
+  .reviews__slider {
+    display: grid;
+    gap: 2rem;
+    align-content: space-between;
+    min-height: 100%;
+  }
+
+  .reviews__track {
+    display: grid;
+  }
+
+  .review {
+    grid-area: 1 / 1;
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    align-content: start;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.4s,
+      visibility 0s 0.4s;
+  }
+
+  .review.is-on {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 0.6s 0.15s,
+      visibility 0s;
+  }
+
+  .review blockquote p {
+    font-size: clamp(1.5rem, 3.1vw, 3.1rem);
+    line-height: 1.12;
+    letter-spacing: -0.038em;
+    font-weight: 500;
+    text-wrap: pretty;
+  }
+
+  .review blockquote p::before {
+    content: '«';
+  }
+
+  .review blockquote p::after {
+    content: '»';
+  }
+
+  .review figcaption {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .review strong {
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: -0.015em;
+  }
+
+  .reviews__nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .reviews__count {
+    margin-right: auto;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .reviews__nav button {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px var(--line);
+    transition:
+      background-color 0.3s,
+      color 0.3s,
+      box-shadow 0.3s;
+  }
+
+  .reviews__nav :global(svg) {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  @media (hover: hover) {
+    .reviews__nav button:hover {
+      background: var(--white);
+      color: var(--wine);
+      box-shadow: none;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .reviews__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

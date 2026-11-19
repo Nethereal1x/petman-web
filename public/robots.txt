@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://petman.com.ua/sitemap-index.xml

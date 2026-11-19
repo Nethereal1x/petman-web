@@ -1,0 +1,188 @@
+---
+// Картки команди. Справжні люди клініки, з напрямом роботи і деталлю «хто чекає вдома».
+import Img from './Img.astro';
+import { team } from '../data/team';
+
+interface Props {
+  /** на сторінці /komanda/ картки більші й підпис завжди видно */
+  detailed?: boolean;
+}
+
+const { detailed = false } = Astro.props;
+---
+
+<ul class:list={['team', { 'team--detailed': detailed }]} data-team>
+  {
+    team.map((m, i) => (
+      <li class="member" data-reveal data-reveal-delay={i * 0.08} id={m.id}>
+        <div class:list={['member__pic', `member__pic--${m.tone}`]}>
+          <Img
+            name={m.image}
+            alt={`${m.name}, ${m.role.toLowerCase()}`}
+            sizes="(max-width: 600px) 72vw, (max-width: 960px) 44vw, 23vw"
+          />
+          <p class="member__home">{m.home}</p>
+        </div>
+        <div class="member__text">
+          <h3 class="h3">{m.name}</h3>
+          <p class="soft">{m.role}</p>
+          <ul class="member__tags">
+            {m.focus.map((f) => <li>{f}</li>)}
+          </ul>
+        </div>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .team {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(0.75rem, 1.4vw, 1.5rem);
+  }
+
+  .member:nth-child(even) {
+    margin-top: clamp(1.5rem, 4vw, 4.5rem);
+  }
+
+  .member__pic {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    isolation: isolate;
+  }
+
+  .member__pic--orange {
+    background: var(--orange);
+    --cap: var(--ink);
+  }
+
+  .member__pic--ink {
+    background: var(--ink);
+    --cap: var(--orange);
+  }
+
+  .member__pic--wine {
+    background: var(--wine);
+    --cap: var(--orange);
+  }
+
+  .member__pic :global(picture) {
+    display: block;
+    width: 88%;
+    transform-origin: 50% 100%;
+    transition: transform 0.9s var(--ease-out);
+  }
+
+  .member__pic :global(img) {
+    width: 100%;
+  }
+
+  .member__home {
+    position: absolute;
+    inset: auto 0.6rem 0.6rem 0.6rem;
+    z-index: 2;
+    padding: 0.85rem 1rem;
+    border-radius: calc(var(--radius) - 0.35rem);
+    background: var(--white);
+    color: var(--ink);
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.012em;
+    transform: translateY(calc(100% + 0.7rem));
+    transition: transform 0.7s var(--ease-out);
+  }
+
+  .member__text {
+    display: grid;
+    gap: 0.35rem;
+    padding-top: 1rem;
+  }
+
+  .member__text p {
+    font-size: 0.975rem;
+    line-height: 1.35;
+  }
+
+  .member__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+  }
+
+  .member__tags li {
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1.5px var(--line);
+    font-size: 0.82rem;
+    font-weight: 650;
+  }
+
+  @media (hover: hover) {
+    .member:hover .member__pic :global(picture) {
+      transform: scale(1.06);
+    }
+
+    .member:hover .member__home {
+      transform: none;
+    }
+  }
+
+  @media (hover: none) {
+    .member__home {
+      transform: none;
+    }
+  }
+
+  .team--detailed .member__home {
+    transform: none;
+  }
+
+  @media (max-width: 960px) {
+    .team {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2rem 0.75rem;
+    }
+
+    .member:nth-child(even) {
+      margin-top: 2.5rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .team:not(.team--detailed) {
+      display: flex;
+      gap: 0.75rem;
+      margin-inline: calc(var(--gutter) * -1);
+      padding-inline: var(--gutter);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+
+    .team:not(.team--detailed)::-webkit-scrollbar {
+      display: none;
+    }
+
+    .team:not(.team--detailed) .member {
+      flex: 0 0 72vw;
+      margin-top: 0;
+      scroll-snap-align: center;
+    }
+
+    .team--detailed {
+      grid-template-columns: 1fr;
+    }
+
+    .team--detailed .member:nth-child(even) {
+      margin-top: 0;
+    }
+  }
+</style>

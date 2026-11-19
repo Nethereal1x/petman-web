@@ -1,0 +1,130 @@
+{
+  "dog-lab": {
+    "width": 681,
+    "height": 1052,
+    "widths": [
+      640,
+      681
+    ]
+  },
+  "cat-tabby": {
+    "width": 1499,
+    "height": 2700,
+    "widths": [
+      480,
+      900
+    ]
+  },
+  "dog-golden": {
+    "width": 1675,
+    "height": 2010,
+    "widths": [
+      480,
+      900
+    ]
+  },
+  "team-viktoriia": {
+    "width": 810,
+    "height": 1087,
+    "widths": [
+      420,
+      810
+    ]
+  },
+  "team-vlada": {
+    "width": 870,
+    "height": 1151,
+    "widths": [
+      420,
+      840
+    ]
+  },
+  "team-olha": {
+    "width": 727,
+    "height": 1120,
+    "widths": [
+      420,
+      727
+    ]
+  },
+  "team-stepan": {
+    "width": 812,
+    "height": 1111,
+    "widths": [
+      420,
+      812
+    ]
+  },
+  "svc-therapy": {
+    "width": 930,
+    "height": 1395,
+    "widths": [
+      480,
+      930
+    ]
+  },
+  "svc-vaccination": {
+    "width": 930,
+    "height": 1395,
+    "widths": [
+      480,
+      930
+    ]
+  },
+  "svc-dentistry": {
+    "width": 930,
+    "height": 1395,
+    "widths": [
+      480,
+      930
+    ]
+  },
+  "svc-lab": {
+    "width": 930,
+    "height": 1395,
+    "widths": [
+      480,
+      930
+    ]
+  },
+  "svc-surgery": {
+    "width": 930,
+    "height": 1395,
+    "widths": [
+      480,
+      930
+    ]
+  },
+  "svc-checkup": {
+    "width": 1406,
+    "height": 924,
+    "widths": [
+      640,
+      1280
+    ]
+  },
+  "clinic-reception": {
+    "width": 960,
+    "height": 1280,
+    "widths": [
+      480,
+      960
+    ]
+  },
+  "clinic-cat": {
+    "width": 960,
+    "height": 1280,
+    "widths": [
+      480,
+      960
+    ]
+  },
+  "logo-mark": {
+    "width": 1116,
+    "height": 840,
+    "widths": [
+      96,
+      192
+    ]
+  }
+}

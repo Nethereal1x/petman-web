@@ -1,0 +1,40 @@
+---
+// Таблиця цін: назва зліва, сума з «грн» справа, примітка під назвою.
+// Однаково читається на телефоні та комп'ютері, без вирівнювання пробілами.
+import type { PriceGroup } from '../data/services';
+import { uah } from '../data/site';
+
+interface Props {
+  groups: PriceGroup[];
+  /** рівень заголовка групи */
+  level?: 'h2' | 'h3';
+}
+
+const { groups, level = 'h3' } = Astro.props;
+const Tag = level;
+
+const price = (row: PriceGroup['rows'][number]) =>
+  typeof row.price === 'number' ? `${row.from ? 'від ' : ''}${uah(row.price)}` : row.price;
+---
+
+<div class="prices">
+  {
+    groups.map((group) => (
+      <section class="price-group" data-price-group>
+        <header class="price-group__head">
+          <Tag class="h3">{group.title}</Tag>
+          {group.note && <small>{group.note}</small>}
+        </header>
+        <dl>
+          {group.rows.map((row) => (
+            <div class="price-row" data-price-row>
+              <dt>{row.name}</dt>
+              <dd class="num">{price(row)}</dd>
+              {row.note && <dd class="price-row__note">{row.note}</dd>}
+            </div>
+          ))}
+        </dl>
+      </section>
+    ))
+  }
+</div>
