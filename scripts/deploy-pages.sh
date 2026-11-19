@@ -16,6 +16,6 @@ rm -rf .git
 git init -q -b gh-pages
 git add -A
 git commit -q -m "Deploy $(git -C .. rev-parse --short HEAD)"
-git push -q -f "$REMOTE" gh-pages
+git -c http.postBuffer=524288000 push -q -f "$REMOTE" gh-pages
 rm -rf .git
 echo "Опубліковано: гілка gh-pages у $REPO"
